@@ -1,0 +1,63 @@
+[gd_scene load_steps=8 format=3 uid="uid://cdjmus1olip1l"]
+
+[ext_resource type="PackedScene" uid="uid://def8p4fxbjjsn" path="res://scenes/player.tscn" id="1_n26jv"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_tnpcp"]
+[ext_resource type="PackedScene" uid="uid://dxhv4wmxo8jtd" path="res://scenes/mob.tscn" id="2_cntcr"]
+[ext_resource type="PackedScene" uid="uid://3oxm12ds8u2n" path="res://scenes/hud.tscn" id="4_b1x5d"]
+[ext_resource type="AudioStream" uid="uid://br66iky54ct7" path="res://art/House In a Forest Loop.ogg" id="5_v6g1d"]
+[ext_resource type="AudioStream" uid="uid://bcrggy3cbjiop" path="res://art/gameover.wav" id="6_4l5w2"]
+
+[sub_resource type="Curve2D" id="Curve2D_x0225"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 480, 3, 0, 0, 0, 0, 479, 722, 0, 0, 0, 0, 1, 721, 0, 0, 0, 0, 2, 1)
+}
+point_count = 5
+
+[node name="Main" type="Node"]
+script = ExtResource("1_tnpcp")
+mob_scene = ExtResource("2_cntcr")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.901961, 0.313726, 0.470588, 1)
+
+[node name="Player" parent="." instance=ExtResource("1_n26jv")]
+
+[node name="MobTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="ScoreTimer" type="Timer" parent="."]
+
+[node name="StartTimer" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+autostart = true
+
+[node name="StartPosition" type="Marker2D" parent="."]
+position = Vector2(240, 450)
+
+[node name="MobPath" type="Path2D" parent="."]
+curve = SubResource("Curve2D_x0225")
+
+[node name="MobSpawnLocation" type="PathFollow2D" parent="MobPath"]
+position = Vector2(2, 1)
+rotation = 0.00418408
+
+[node name="HUD" parent="." instance=ExtResource("4_b1x5d")]
+
+[node name="Music" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_v6g1d")
+parameters/looping = false
+
+[node name="DeathSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6_4l5w2")
+
+[connection signal="hit" from="Player" to="." method="game_over"]
+[connection signal="timeout" from="MobTimer" to="." method="_on_mob_timer_timeout"]
+[connection signal="timeout" from="ScoreTimer" to="." method="_on_score_timer_timeout"]
+[connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="start_game" from="HUD" to="." method="new_game"]
