@@ -2,6 +2,7 @@ extends Node
 
 
 @export var mob_scene: PackedScene
+
 var score := 0
 
 
@@ -15,7 +16,7 @@ func game_over() -> void:
 	$DeathSound.play()
 
 
-func new_game():
+func new_game() -> void:
 	score = 0
 	$Player.start($StartPosition.position)
 	$StartTimer.start()
